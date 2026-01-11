@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, subject, message } = body;
+    const { name, email, subject, message, recaptchaToken } = body;
 
     // Validate required fields
     if (!name || !email || !subject || !message) {
@@ -12,6 +12,48 @@ export async function POST(request: NextRequest) {
         { error: "All fields are required" },
         { status: 400 }
       );
+    }
+
+    // Verify reCAPTCHA token
+    const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
+    if (recaptchaSecretKey) {
+      if (!recaptchaToken) {
+        return NextResponse.json(
+          { error: "reCAPTCHA verification failed. Please try again." },
+          { status: 400 }
+        );
+      }
+
+      const recaptchaResponse = await fetch(
+        `https://www.google.com/recaptcha/api/siteverify`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `secret=${recaptchaSecretKey}&response=${recaptchaToken}`,
+        }
+      );
+
+      const recaptchaData = await recaptchaResponse.json();
+
+      if (!recaptchaData.success) {
+        console.error("reCAPTCHA verification failed:", recaptchaData);
+        return NextResponse.json(
+          { error: "reCAPTCHA verification failed. Please try again." },
+          { status: 400 }
+        );
+      }
+
+      // Optional: Check score threshold (v3 returns a score from 0.0 to 1.0)
+      // Lower scores indicate bot-like behavior
+      if (recaptchaData.score < 0.5) {
+        console.warn("reCAPTCHA score too low:", recaptchaData.score);
+        return NextResponse.json(
+          { error: "reCAPTCHA verification failed. Please try again." },
+          { status: 400 }
+        );
+      }
     }
 
     // Validate email format

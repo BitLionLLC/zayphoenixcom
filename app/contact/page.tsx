@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
-export default function ContactPage() {
+function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,6 +13,7 @@ export default function ContactPage() {
   });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,13 +29,25 @@ export default function ContactPage() {
     setStatus("sending");
     setErrorMessage("");
 
+    if (!executeRecaptcha) {
+      setStatus("error");
+      setErrorMessage("reCAPTCHA not loaded. Please refresh the page.");
+      return;
+    }
+
     try {
+      // Execute reCAPTCHA v3
+      const recaptchaToken = await executeRecaptcha("contact_form");
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken,
+        }),
       });
 
       const data = await response.json();
@@ -53,7 +67,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-black">
+    <>
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between">
@@ -245,6 +259,34 @@ export default function ContactPage() {
           <p>© {new Date().getFullYear()} Zay Phoenix. All rights reserved.</p>
         </div>
       </footer>
+    </>
+  );
+}
+
+export default function ContactPage() {
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+  if (!siteKey) {
+    console.error("NEXT_PUBLIC_RECAPTCHA_SITE_KEY is not set");
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-black">
+      {siteKey ? (
+        <GoogleReCaptchaProvider
+          reCaptchaKey={siteKey}
+          scriptProps={{
+            async: false,
+            defer: false,
+            appendTo: "head",
+            nonce: undefined,
+          }}
+        >
+          <ContactForm />
+        </GoogleReCaptchaProvider>
+      ) : (
+        <ContactForm />
+      )}
     </div>
   );
 }
