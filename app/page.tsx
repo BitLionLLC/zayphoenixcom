@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 // Get all image filenames
@@ -187,9 +188,9 @@ export default function Home() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Zay Phoenix
-          </div>
+          </Link>
           <div className="flex gap-6">
             <a href="#gallery" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
               Gallery
@@ -197,9 +198,9 @@ export default function Home() {
             <a href="#about" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
               About
             </a>
-            <a href="#contact" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+            <Link href="/contact" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
               Contact
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -223,12 +224,12 @@ export default function Home() {
             >
               View Gallery
             </a>
-            <a
-              href="#contact"
+            <Link
+              href="/contact"
               className="px-8 py-4 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border-2 border-zinc-300 dark:border-zinc-700 rounded-full font-semibold hover:border-purple-500 dark:hover:border-pink-500 transition-all duration-200"
             >
-              Follow Me
-            </a>
+              Contact Me
+            </Link>
           </div>
         </div>
       </section>
@@ -274,7 +275,7 @@ export default function Home() {
             About
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-            Welcome to my digital world! I&apos;m Zay Phoenix, an AI influencer pushing the boundaries of what&apos;s possible 
+            Welcome to my digital world! I&apos;m Zay Phoenix, a 24 year-old AI influencer pushing the boundaries of what&apos;s possible 
             in the digital content space. Through cutting-edge AI technology and creative vision, I bring unique 
             perspectives and engaging content to audiences worldwide.
           </p>
@@ -296,18 +297,18 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <a
-              href="#"
+              href="https://www.instagram.com/zay.phoenix"
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
             >
               Instagram
             </a>
             <a
-              href="#"
+              href="https://www.facebook.com/profile.php?id=61586040368901"
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
             >
-              Twitter
+              Facebook
             </a>
-            <a
+            {/* <a
               href="#"
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
             >
@@ -318,7 +319,7 @@ export default function Home() {
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
             >
               YouTube
-            </a>
+            </a> */}
           </div>
         </div>
       </section>
